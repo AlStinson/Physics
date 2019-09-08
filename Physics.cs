@@ -11,8 +11,6 @@ public class Physics : MonoBehaviour
     public float speed_y;
 
     public bool grounded;
-    public bool left_walled;
-    public bool right_walled;
 
 
     public virtual void Start()
