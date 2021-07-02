@@ -2,15 +2,17 @@ public class Physics : MonoBehaviour
 {
     public Collider2D col;
 
+    public const offset = 0.01f;
+    public const min_size = 0.1f;
+    
+    public const gravity = 9.8f;
+
+
     public bool is_movible;
-    public bool is_player;
-    public bool is_enemy;
-    public float gravity;
+    public float mass;
 
     public float speed_x;
     public float speed_y;
-
-    public bool grounded;
 
 
     public virtual void Start()
@@ -20,7 +22,7 @@ public class Physics : MonoBehaviour
 
     public virtual void Update()
     {
-        speed_y -= gravity * Time.deltaTime;
+        speed_y -= gravity * mass * Time.deltaTime;
 
         MoveX(speed_x * Time.deltaTime);
         MoveY(speed_y * Time.deltaTime);
@@ -51,13 +53,13 @@ public class Physics : MonoBehaviour
     {
         if (f != 0f)
         {
-            float diference = col.bounds.max.y - col.bounds.min.y - 0.02f;
-            float amount = diference / 0.1f;
+            float diference = col.bounds.max.y - col.bounds.min.y - 2*offset;
+            float amount = diference / min_size;
             float sign = Mathf.Sign(f);
-            float xposition = f > 0 ? col.bounds.max.x + 0.01f : col.bounds.min.x - 0.01f;
+            float xposition = f > 0 ? col.bounds.max.x + offset : col.bounds.min.x - offset;
             for (float i = 0; i <= amount; i++)
             {
-                float yposition = 0.01f + col.bounds.min.y + diference * i / amount;
+                float yposition = offset + col.bounds.min.y + diference * i / amount;
                 RaycastHit2D hit = Physics2D.Raycast(new Vector2(xposition, yposition), Vector2.right * sign, Mathf.Abs(f), Layers.Ignore(Layers.triggers));
                 if (hit.collider != null)
                 {
@@ -67,9 +69,8 @@ public class Physics : MonoBehaviour
                     colliders[hit.collider] = hit.distance;
                 }
             }
-            return f;
         }
-        return 0;
+        return f;
     }
 
     public void MoveY(float f)
@@ -97,10 +98,10 @@ public class Physics : MonoBehaviour
     {
         if (f != 0f)
         {
-            float diference = col.bounds.max.x - col.bounds.min.x - 0.02f;
-            float amount = diference / 0.1f;
+            float diference = col.bounds.max.x - col.bounds.min.x - 2*offset;
+            float amount = diference / min_size;
             float sign = Mathf.Sign(f);
-            float yposition = f > 0 ? col.bounds.max.y + 0.01f : col.bounds.min.y - 0.01f;
+            float yposition = f > 0 ? col.bounds.max.y + offset : col.bounds.min.y - offset;
             for (float i = 0; i <= amount; i++)
             {
                 float xposition = 0.01f + col.bounds.min.x + diference * i / amount;
@@ -113,8 +114,7 @@ public class Physics : MonoBehaviour
                     colliders[hit.collider] = hit.distance;
                 }
             }
-            return f;
         }
-        return 0;
+        return f;
     }
 }
